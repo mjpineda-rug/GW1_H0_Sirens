@@ -148,7 +148,7 @@ def sampler_2D(
 # https://research-portal.uu.nl/ws/portalfiles/portal/248573031/PhysRevD.110.083033.pdf proposal width of 20%
 n_samples=100000
 initial=[80, -1]
-proposal_width = [10, 0.01]
+proposal_width = [0.1, 0.01]
 
 chain = sampler_2D(n_samples,initial,proposal_width)[0]
 
@@ -190,9 +190,9 @@ plt.axvspan(
     high,
     color='red',
     alpha=0.2,
-    label='68% Credible Region'
+    label=f'68% Credible Region = [{low:.2f},{high:.2f}]'
 )
-plt.axvline(median, color='red', linewidth=1,label="Median")
+plt.axvline(median, color='red', linewidth=1,label=f"Median = {median:.2f}")
 
 plt.legend()
 
