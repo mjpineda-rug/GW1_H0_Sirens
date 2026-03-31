@@ -106,4 +106,4 @@ All plots are saved in the `plots/` folder.
 
 ## Results
 
-For the parameters used in `GW_code.py`, the median value of $H_0$ is found to be $69.16$, with the 68% credible region $[64.49, 79.42]$.
+The two dimensional posterior distribution produced by the MCMC chain has a large 68% credible region, which is to be expected given the extremely small sample size. This region is consistent with the values from both Planck 2018 and SH0ES.
