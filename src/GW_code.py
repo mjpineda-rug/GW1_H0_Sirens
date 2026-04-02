@@ -25,6 +25,7 @@ planck_mean = 67.4
 planck_sigma = 0.5
 shoes_mean = 73.0
 shoes_sigma = 1.0
+np.random.seed(123456)
 
 
 H_0 = (c * z) / d_l
@@ -90,7 +91,7 @@ def log_prior(theta):
 
 def sampler_2D(
     n_samples=5000,
-    initial=[70, 0.0],
+    initial=[80, -1],
     proposal_width=[1, 0.05],
 ):
     accepted_H_0 = []
@@ -104,7 +105,7 @@ def sampler_2D(
 
         # randomly propose new point
         proposal = np.array([
-            np.random.normal(current[0], proposal_width[0]),  # H0
+            np.random.normal(current[0], proposal_width[0],),  # H0
             np.random.normal(current[1], proposal_width[1])   # cos(iota)
         ])
 
@@ -148,13 +149,13 @@ def sampler_2D(
 # https://research-portal.uu.nl/ws/portalfiles/portal/248573031/PhysRevD.110.083033.pdf proposal width of 20%
 n_samples=100000
 initial=[80, -1]
-proposal_width = [0.1, 0.01]
+proposal_width = [5, 0.1]
 
 chain = sampler_2D(n_samples,initial,proposal_width)[0]
 
 # Remove burn-in
 burnin = int(n_samples/200)
-burnin = 0
+burnin = 100
 samples = chain[burnin:]
 
 H0_samples = samples[:, 0]
@@ -162,7 +163,7 @@ H0_samples = samples[:, 0]
 median = np.median(H0_samples)
 low, high = np.percentile(H0_samples, [16, 84])
 
-plt.hist2d(samples[:, 0], samples[:, 1], bins=50, density=True,cmap='Greys')
+plt.hist2d(samples[:, 0], samples[:, 1], bins=50, density=True,cmap='YlOrRd')
 plt.xlabel(r"$H_0$")
 plt.ylabel(r"cos($\iota$)")
 plt.colorbar(label="Posterior density")
@@ -188,11 +189,11 @@ plt.axvline(planck_mean, color='green', linewidth=1)
 plt.axvspan(
     low,
     high,
-    color='red',
+    color='cyan',
     alpha=0.2,
     label=f'68% Credible Region = [{low:.2f},{high:.2f}]'
 )
-plt.axvline(median, color='red', linewidth=1,label=f"Median = {median:.2f}")
+plt.axvline(median, color='black',linestyle='--', linewidth=1,label=f"Median = {median:.2f}")
 
 plt.legend()
 
