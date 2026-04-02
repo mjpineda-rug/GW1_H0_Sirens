@@ -4,6 +4,7 @@ import numpy as np
 from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 import corner
+from scipy import stats
 from pathlib import Path
 
 # Get path of this script
@@ -19,7 +20,7 @@ d_l = df['luminosity_distance_Mpc']
 cos_iota = df['costheta_jn']
 
 z = 0.009877        # redshift from https://ned.ipac.caltech.edu/byname?objname=ngc+4993&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1
-# z_uncert = 1.67e-5 do we need to take this into account?
+z_uncert = 1.67e-5 
 c = 299792.458      # speed of light in km/s from https://physics.nist.gov/cgi-bin/cuu/Value?c
 planck_mean = 67.4
 planck_sigma = 0.5
@@ -146,6 +147,19 @@ def sampler_2D(
 
     return np.array(chain), accepted_H_0, accepted_cos_iota,n_accepted/n_samples
 
+def compute_hpd(samples, alpha=0.68):
+    sorted_samples = np.sort(samples)
+    N = len(samples)
+    interval_idx = int(np.floor(alpha * N))
+    
+    intervals = sorted_samples[interval_idx:] - sorted_samples[:N - interval_idx]
+    min_idx = np.argmin(intervals)
+    
+    hpd_min = sorted_samples[min_idx]
+    hpd_max = sorted_samples[min_idx + interval_idx]
+    
+    return hpd_min, hpd_max
+
 # https://research-portal.uu.nl/ws/portalfiles/portal/248573031/PhysRevD.110.083033.pdf proposal width of 20%
 n_samples=100000
 initial=[80, -1]
@@ -160,8 +174,14 @@ samples = chain[burnin:]
 
 H0_samples = samples[:, 0]
 
-median = np.median(H0_samples)
-low, high = np.percentile(H0_samples, [16, 84])
+kde_1d = gaussian_kde(H0_samples)
+
+H0_grid = np.linspace(min(H0_samples), max(H0_samples), 1000)
+posterior_vals = kde_1d(H0_grid)
+
+MAP = H0_grid[np.argmax(posterior_vals)]
+
+low, high = compute_hpd(H0_samples, alpha=0.68)
 
 plt.hist2d(samples[:, 0], samples[:, 1], bins=50, density=True,cmap='YlOrRd')
 plt.xlabel(r"$H_0$")
@@ -193,7 +213,7 @@ plt.axvspan(
     alpha=0.2,
     label=f'68% Credible Region = [{low:.2f},{high:.2f}]'
 )
-plt.axvline(median, color='black',linestyle='--', linewidth=1,label=f"Median = {median:.2f}")
+plt.axvline(MAP, color='black',linestyle='--', linewidth=1,label=f"MAP = {MAP:.2f}")
 
 plt.legend()
 
