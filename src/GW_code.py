@@ -5,6 +5,7 @@ from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 import corner
 from pathlib import Path
+from sklearn.neighbors import KernelDensity
 
 # Get path of this script
 BASE_DIR = Path(__file__).resolve().parent
@@ -43,8 +44,16 @@ bandwidth = 0.1
 data_l_d_cos_iota = np.vstack((d_l,cos_iota)) # needed because kde for 2D takes a 2D array of shape (# dims, # data)
 
 # kde model 
-kde = gaussian_kde(data_l_d_cos_iota,bw_method=bandwidth)
+def kde_sklearn(d_l, bandwidth = 1.0, kernel="linear"):           # Velocity corrections need the kde gaussian
+    kde_skl = KernelDensity(bandwidth = bandwidth, 
+                            kernel=kernel) # Define the KDE object
+    kde_skl.fit(data[:, np.newaxis]) # Fit the KDE model
+    log_pdf = kde_skl.score_samples(xgrid[:, np.newaxis]) # sklearn returns log(density)
 
+    return np.exp(log_pdf)
+
+
+kde = kde_sklearn(H0,bandwidth=0.3,kernel="gaussian")
 # apply kde to the grid points
 # we need to ravel (flatten) the grid points and stack them into a 2D array of shape (# dims, # grid points) for the kde
 kde_values = kde(np.vstack([d_l_grid.ravel(), cos_iota_grid.ravel()]))
