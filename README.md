@@ -15,7 +15,7 @@ This project estimates the Hubble constant $H_0$ using gravitational-wave data f
 Install the required Python packages:
 
 ```bash
-pip install numpy scipy matplotlib h5py corner
+pip install numpy scipy pandas matplotlib h5py corner
 ```
 
 ---
@@ -40,7 +40,7 @@ Download the GW170817 posterior samples from:
 
 https://dcc.ligo.org/LIGO-P1800370/public
 
-Place the downloaded file in the `data/` folder.
+Place the downloaded file in the `data/` folder under the name `GW170817_GWTC-1.hdf5`.
 
 ---
 
