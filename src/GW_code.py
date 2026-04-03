@@ -56,7 +56,7 @@ J = (c * z) / (H_0_grid**2)
 likelihood = kde_values.reshape(H_0_grid.shape) * J
 
 
-def log_likelihood(theta):
+def log_likelihood(theta):                          #searches our likelihood grid for the values closest to a given H0, cos(iota); returns log of corresponding likelihood
     H0, cos_iota_val = theta
 
     # Extract grid axes
@@ -89,7 +89,7 @@ def log_prior(theta):
         return -np.log(H0)
     return -np.inf
 
-def sampler_2D(
+def sampler_2D(                                    #MCMC function, executes Metro-Hastings algorithm
     n_samples=5000,
     initial=[80, -1],
     proposal_width=[1, 0.05],
@@ -146,7 +146,7 @@ def sampler_2D(
 
     return np.array(chain), accepted_H_0, accepted_cos_iota,n_accepted/n_samples
 
-def compute_hpd(samples, alpha=0.68):
+def compute_hpd(samples, alpha=0.68):           # for computing our 68% credible region around the MAP
     sorted_samples = np.sort(samples)
     N = len(samples)
     interval_idx = int(np.floor(alpha * N))
