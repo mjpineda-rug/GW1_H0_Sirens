@@ -4,7 +4,6 @@ import numpy as np
 from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 import corner
-from scipy import stats
 from pathlib import Path
 
 # Get path of this script
@@ -26,7 +25,7 @@ planck_mean = 67.4
 planck_sigma = 0.5
 shoes_mean = 73.0
 shoes_sigma = 1.0
-np.random.seed(123456)
+np.random.seed(123456)      # for reproducability 
 
 
 H_0 = (c * z) / d_l
@@ -168,7 +167,6 @@ proposal_width = [5, 0.1]
 chain = sampler_2D(n_samples,initial,proposal_width)[0]
 
 # Remove burn-in
-burnin = int(n_samples/200)
 burnin = 100
 samples = chain[burnin:]
 
@@ -182,6 +180,16 @@ posterior_vals = kde_1d(H0_grid)
 MAP = H0_grid[np.argmax(posterior_vals)]
 
 low, high = compute_hpd(H0_samples, alpha=0.68)
+
+#Redshift correction
+
+delta_H0_z = MAP * z**(-1) * z_uncert
+low = np.sqrt(low**2+delta_H0_z**2)
+high = np.sqrt(high**2+delta_H0_z**2)
+
+
+
+
 
 plt.hist2d(samples[:, 0], samples[:, 1], bins=50, density=True,cmap='YlOrRd')
 plt.xlabel(r"$H_0$")
