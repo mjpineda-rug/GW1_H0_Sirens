@@ -29,6 +29,7 @@ project/
 ├── notebooks/     # Jupyter notebooks for analysis
 ├── src/           # Core code
 ├── plots/         # Generated figures
+├── report/        # LaTeX write-up with findings, theoretical background, and results discussion
 └── README.md
 ```
 
