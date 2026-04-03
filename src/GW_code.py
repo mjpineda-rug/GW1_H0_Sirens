@@ -123,11 +123,11 @@ def sampler_2D(                                    #MCMC function, executes Metr
 
         # compute acceptance probability, then decide to take current or proposal
         # If proposal is invalid we reject immediately to avoid breakdown
-        if not np.isfinite(log_post_current):
+        if not np.isfinite(log_post_proposal):
             accept = False
 
-        # If current is invalid (should only activate if the very first initials are bad)
-        elif not np.isfinite(log_post_proposal):
+        # If current is invalid (should only activate if the very first initials are bad) we move on regardless to escape invalidity
+        elif not np.isfinite(log_post_current):
             accept = True
 
         else:
@@ -147,7 +147,7 @@ def sampler_2D(                                    #MCMC function, executes Metr
     return np.array(chain), accepted_H_0, accepted_cos_iota,n_accepted/n_samples
 
 
-def compute_hpd(samples, alpha=0.68):       #for determining 68% credible region around MAP. We do this here using the highest probability density (hpd) approach
+def compute_hpd(samples, alpha=0.68):       #for determining 68% credible region around MAP. We do this here using the highest posterior density (hpd) approach
                                             # alpha is the desired probability mass
     
     # sort samples to get candidate intervals
