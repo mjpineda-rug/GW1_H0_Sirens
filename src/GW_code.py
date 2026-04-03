@@ -128,7 +128,7 @@ def sampler_2D(                                    #MCMC function, executes Metr
 
         # If current is invalid (should only activate if the very first initials are bad)
         elif not np.isfinite(log_post_proposal):
-            accept = False
+            accept = True
 
         else:
             log_p_accept = log_post_proposal - log_post_current
