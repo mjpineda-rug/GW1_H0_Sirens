@@ -146,12 +146,21 @@ def sampler_2D(                                    #MCMC function, executes Metr
 
     return np.array(chain), accepted_H_0, accepted_cos_iota,n_accepted/n_samples
 
-def compute_hpd(samples, alpha=0.68):           # for computing our 68% credible region around the MAP
+
+def compute_hpd(samples, alpha=0.68):       #for determining 68% credible region around MAP. We do this here using the highest probability density (hpd) approach
+                                            # alpha is the desired probability mass
+    
+    # sort samples to get candidate intervals
     sorted_samples = np.sort(samples)
     N = len(samples)
+
+    # Number of samples in the desired interval
     interval_idx = int(np.floor(alpha * N))
     
+     # Compute widths of all possible intervals containing alpha fraction
     intervals = sorted_samples[interval_idx:] - sorted_samples[:N - interval_idx]
+
+    # Select the narrowest interval (highest density region), and return the bounds of this interval
     min_idx = np.argmin(intervals)
     
     hpd_min = sorted_samples[min_idx]
