@@ -184,15 +184,13 @@ low, high = compute_hpd(H0_samples, alpha=0.68)
 #Redshift correction
 
 delta_H0_z = MAP * z**(-1) * z_uncert
-low = np.sqrt(low**2+delta_H0_z**2)
-high = np.sqrt(high**2+delta_H0_z**2)
 
 
 
 
 
 plt.hist2d(samples[:, 0], samples[:, 1], bins=50, density=True,cmap='YlOrRd')
-plt.xlabel(r"$H_0$")
+plt.xlabel(r"$H_0 \ \mathrm{{km\,s^{{-1}}\,Mpc^{{-1}}}}$")
 plt.ylabel(r"cos($\iota$)")
 plt.colorbar(label="Posterior density")
 
@@ -221,7 +219,7 @@ plt.axvspan(
     alpha=0.2,
     label=f'68% Credible Region = [{low:.2f},{high:.2f}]'
 )
-plt.axvline(MAP, color='black',linestyle='--', linewidth=1,label=f"MAP = {MAP:.2f}")
+plt.axvline(MAP, color='black',linestyle='--', linewidth=1,label=rf"MAP = {MAP:.2f} $\pm$ {delta_H0_z:.2f}")
 
 plt.legend()
 
