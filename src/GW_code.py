@@ -23,8 +23,8 @@ z_uncert = 1.67e-5
 c = 299792.458      # speed of light in km/s from https://physics.nist.gov/cgi-bin/cuu/Value?c
 planck_mean = 67.4
 planck_sigma = 0.5
-shoes_mean = 73.0
-shoes_sigma = 1.0
+shoes_mean = 73.24
+shoes_sigma = 1.74
 np.random.seed(123456)      # for reproducability 
 
 
