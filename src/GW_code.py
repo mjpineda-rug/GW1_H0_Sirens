@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import corner
 from pathlib import Path
 
+
+######## SEE GW_notebook.ipynb OR THE LaTeX REPORT FOR A MORE IN DEPT EXPLANATION OF THE APPROACHES USED ##########
+
 # Get path of this script
 BASE_DIR = Path(__file__).resolve().parent
 data_path = BASE_DIR.parent / "data" / "GW170817_GWTC-1.hdf5"
@@ -18,14 +21,14 @@ df = pd.read_hdf(data_path, key='IMRPhenomPv2NRT_highSpin_posterior')
 d_l = df['luminosity_distance_Mpc']
 cos_iota = df['costheta_jn']
 
-z = 0.009877        # redshift from https://ned.ipac.caltech.edu/byname?objname=ngc+4993&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1
+z = 0.009877                # redshift from https://ned.ipac.caltech.edu/byname?objname=ngc+4993&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1
 z_uncert = 1.67e-5 
-c = 299792.458      # speed of light in km/s from https://physics.nist.gov/cgi-bin/cuu/Value?c
-planck_mean = 67.4
+c = 299792.458              # speed of light in km/s from https://physics.nist.gov/cgi-bin/cuu/Value?c
+planck_mean = 67.4          #https://arxiv.org/abs/1807.06209v4
 planck_sigma = 0.5
-shoes_mean = 73.24
+shoes_mean = 73.24          # https://doi.org/10.48550/arXiv.2112.04510
 shoes_sigma = 1.74
-np.random.seed(123456)      # for reproducability 
+np.random.seed(123456)      # for reproducibility 
 
 
 H_0 = (c * z) / d_l
