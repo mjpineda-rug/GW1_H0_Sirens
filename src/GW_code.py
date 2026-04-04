@@ -234,7 +234,7 @@ plt.axvspan(
 plt.axvline(MAP, color='black',linestyle='--', linewidth=1,label=rf"MAP = {MAP:.2f} $\pm$ {delta_H0_z:.2f}")
 
 plt.legend()
-
+plt.title("Posterior")
 plt.savefig(plots_dir / "2D-posterior.png", dpi=300)
 plt.close()
 
@@ -245,5 +245,6 @@ fig = corner.corner(
 )
 plt.savefig(plots_dir / "2D_and_1D_posterior.png", dpi=300)
 plt.close()
+
 
 print("FILES SAVED IN plots/")

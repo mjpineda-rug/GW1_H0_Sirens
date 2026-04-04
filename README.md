@@ -15,7 +15,7 @@ This project estimates the Hubble constant $H_0$ using gravitational-wave data f
 Install the required Python packages:
 
 ```bash
-pip install numpy scipy pandas matplotlib h5py corner
+pip install numpy scipy pandas matplotlib h5py corner emcee
 ```
 
 ---
