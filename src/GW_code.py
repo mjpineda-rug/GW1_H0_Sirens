@@ -2,6 +2,7 @@ import h5py
 import pandas as pd
 import numpy as np
 from scipy.stats import gaussian_kde
+from scipy.stats import norm
 import matplotlib.pyplot as plt
 import corner
 from pathlib import Path
@@ -28,6 +29,8 @@ planck_mean = 67.4          #https://arxiv.org/abs/1807.06209v4
 planck_sigma = 0.5
 shoes_mean = 73.30          # https://doi.org/10.48550/arXiv.2112.04510
 shoes_sigma = 1.04
+sigma_pec = 250             # km/s, typical peculiar-velocity correction Gaussian spread, as stated in project proposal
+sigma_z = np.sqrt(z_uncert**2 + (sigma_pec / c)**2)     # following z=v/c, and adding the z uncertainty inquadrature
 np.random.seed(123456)      # for reproducibility 
 
 
@@ -55,8 +58,17 @@ kde_values = kde(np.vstack([d_l_grid.ravel(), cos_iota_grid.ravel()]))
 # define jacobian for the transformation from (d_L, cos(iota)) to (H_0, cos(iota))
 J = (c * z) / (H_0_grid**2)
 
-# need to reshape the kde values back to the shape of the grid and multiply by the jacobian to get the likelihood in terms of (H_0, cos(iota))
-likelihood = kde_values.reshape(H_0_grid.shape) * J
+# Get distance uncertainty from peculiar velocity correction and z uncertainty
+sigma_dL = (c / H_0_grid) * sigma_z
+
+# Predicted distance from Hubble law
+dL_model = (c * z) / H_0_grid
+
+# Gaussian weight from redshift uncertainty
+z_weight = norm.pdf(d_l_grid, loc=dL_model, scale=sigma_dL)
+
+    # need to reshape the kde values back to the shape of the grid and multiply by the jacobian to get the likelihood in terms of (H_0, cos(iota)). include smearing from peculiar velocity correction
+likelihood = kde_values.reshape(H_0_grid.shape) * J * z_weight
 
 
 def log_likelihood(theta):                          #searches our likelihood grid for the values closest to a given H0, cos(iota); returns log of corresponding likelihood
@@ -193,10 +205,6 @@ MAP = H0_grid[np.argmax(posterior_vals)]
 
 low, high = compute_hpd(H0_samples, alpha=0.68)
 
-#Redshift correction
-
-delta_H0_z = MAP * z**(-1) * z_uncert
-
 
 
 
@@ -231,7 +239,7 @@ plt.axvspan(
     alpha=0.2,
     label=f'68% Credible Region = [{low:.2f},{high:.2f}]'
 )
-plt.axvline(MAP, color='black',linestyle='--', linewidth=1,label=rf"MAP = {MAP:.2f} $\pm$ {delta_H0_z:.2f}")
+plt.axvline(MAP, color='black',linestyle='--', linewidth=1,label=rf"MAP = {MAP:.2f}")
 
 plt.legend()
 plt.title("Posterior")
